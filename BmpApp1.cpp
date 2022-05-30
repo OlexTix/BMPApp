@@ -23,16 +23,12 @@ struct PictureHeader {
     int biClrImportant; //number of important color palettes (0, if all are important)
 } Picture;
 
-struct KoloryRGB {
-    char R;
-    char G;
-    char B;
-} Rgb;
 
 int main(int arc, char* argv[]) {
     FILE* f;
 
-    f = fopen("test.bmp","rb"); //fopen- opens files. rb is put as an argument to read the file (r also can be used)
+    f = fopen("test.bmp","rb"); //fopen- opens files. rb is put as an argument to read the file (r also can be used, although, in case of this application, it will make visible artifacts on the negative image file)
+    //+b is added to meet the ISO C Standards in case the file cannot be recognized/opened
 
     if (f == nullptr) //checks if file exists/is not empty
     {
@@ -63,7 +59,7 @@ int main(int arc, char* argv[]) {
 
     printf("\n");
 
-    fseek(f, 14, SEEK_SET); //fseek- function which sets the position indicator (by adding offset) to the beginning of the file
+    fseek(f, 14, SEEK_SET); //fseek- function which sets the position indicator (by adding offset) to the beginning of the file (offset 14, since first 14 bytes are used for file header)
     fread(&Picture.biRozmiar, sizeof(Picture.biRozmiar), 1, f);
     printf("\n Wielkosc naglowka informacyjnego: %d", Picture.biRozmiar);
 
@@ -99,7 +95,7 @@ int main(int arc, char* argv[]) {
 
     /*************************/
 
-    FILE* w = fopen("negative.bmp", "wb");
+    FILE* w = fopen("negative(r).bmp", "wb");
     if (w == nullptr) //checks if file exists/is not empty
     {
         printf("\n\n Nie mozna otworzyc pliku w");
@@ -110,14 +106,15 @@ int main(int arc, char* argv[]) {
         printf("\n\n Plik w został otwarty!");
     }
 
-    fseek(w, 0, SEEK_SET); //fseek- function which sets the position indicator (by adding offset) to the beginning of the file
+    printf("\n\n Trwa tworzenie negatywu wprowadzonego pliku...");
+    fseek(w, 0, SEEK_SET); //fseek- function which sets the position indicator (by adding offset) to the beginning of the file (offset 0, since the file header is being created)
     fwrite(&File.bfTyp, sizeof(File.bfTyp), 1, w); //fwrite- writes an array of elements by the size of specified bytes to the current stream position from memory pointer (ptr)
     fwrite(&File.bfRozmiar, sizeof(File.bfRozmiar), 1, w);
     fwrite(&File.bfReserved1, sizeof(File.bfReserved1), 1, w);
     fwrite(&File.bfReserved2, sizeof(File.bfReserved2), 1, w);
     fwrite(&File.bfOffBits, sizeof(File.bfOffBits), 1, w);
 
-    fseek(w, 14, SEEK_SET); //fseek- function which sets the position indicator (by adding offset) to the beginning of the file
+    fseek(w, 14, SEEK_SET); //fseek- function which sets the position indicator (by adding offset) to the beginning of the file (offset 14, since first 14 bytes are used for file header)
     fwrite(&Picture.biRozmiar, sizeof(Picture.biRozmiar), 1, w);
     fwrite(&Picture.biSzerokosc, sizeof(Picture.biSzerokosc), 1, w);
     fwrite(&Picture.biWysokosc, sizeof(Picture.biWysokosc), 1, w);
