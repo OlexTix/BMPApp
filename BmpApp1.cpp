@@ -1,25 +1,26 @@
 ﻿#include "BmpAppH.h"
+#pragma warning (disable: 4996) //Disables deprecation warnings (for outdated code/functions)
 
 struct FileHeader {
-    short bfType;
-    int bfSize;
+    short bfTyp;
+    int bfRozmiar;
     short bfReserved1;
     short bfReserved2;
     int bfOffBits;
 } File;
 
 struct PictureHeader {
-    int biSize;
-    int biWidth;
-    int biHeight;
-    short biPlanes;
-    short biBitCount;
-    int biCompression;
-    int biSizeImage;
+    int biRozmiar;
+    int biSzerokosc;
+    int biWysokosc;
+    short biWarstwy;
+    short biIloscBitow;
+    int biKompresja;
+    int biRozmiarObrazu;
     int biXPelsPerMeter;
     int biYPelsPerMeter;
     int biClrUsed;
-    int biClrImportant;
+    int biClrImportant; //number of important color palettes (0, if all are important)
 } Picture;
 
 struct KoloryRGB {
@@ -45,11 +46,11 @@ int main(int arc, char* argv[]) {
 
     printf("\n INFORMACJE O BITMAPIE\n\n");
 
-    fread(&File.bfType, sizeof(File.bfType), 1, f); //fread- reads an array of elements with a size of specified bytes which is stored in the specified memory pointer (ptr)
-    printf(" Typ: %x", File.bfType);
+    fread(&File.bfTyp, sizeof(File.bfTyp), 1, f); //fread- reads an array of elements with a size of specified bytes which is stored in the specified memory pointer (ptr)
+    printf(" Typ: %x", File.bfTyp);
 
-    fread(&File.bfSize, sizeof(File.bfSize), 1, f);
-    printf("\n Rozmiar pliku: %d bajtow", File.bfSize);
+    fread(&File.bfRozmiar, sizeof(File.bfRozmiar), 1, f);
+    printf("\n Rozmiar pliku: %d bajtow", File.bfRozmiar);
 
     fread(&File.bfReserved1, sizeof(File.bfReserved1), 1, f);
     printf("\n Zarezerwowane1: %d", File.bfReserved1);
@@ -63,26 +64,26 @@ int main(int arc, char* argv[]) {
     printf("\n");
 
     fseek(f, 14, SEEK_SET); //fseek- function which sets the position indicator (by adding offset) to the beginning of the file
-    fread(&Picture.biSize, sizeof(Picture.biSize), 1, f);
-    printf("\n Wielkosc naglowka informacyjnego: %d", Picture.biSize);
+    fread(&Picture.biRozmiar, sizeof(Picture.biRozmiar), 1, f);
+    printf("\n Wielkosc naglowka informacyjnego: %d", Picture.biRozmiar);
 
-    fread(&Picture.biWidth, sizeof(Picture.biWidth), 1, f);
-    printf("\n Szerokosc: %d pikseli", Picture.biWidth);
+    fread(&Picture.biSzerokosc, sizeof(Picture.biSzerokosc), 1, f);
+    printf("\n Szerokosc: %d pikseli", Picture.biSzerokosc);
 
-    fread(&Picture.biHeight, sizeof(Picture.biHeight), 1, f);
-    printf("\n Wysokosc: %d pikseli", Picture.biHeight);
+    fread(&Picture.biWysokosc, sizeof(Picture.biWysokosc), 1, f);
+    printf("\n Wysokosc: %d pikseli", Picture.biWysokosc);
 
-    fread(&Picture.biPlanes, sizeof(Picture.biPlanes), 1, f);
-    printf("\n Liczba platow: %d", Picture.biPlanes);
+    fread(&Picture.biWarstwy, sizeof(Picture.biWarstwy), 1, f);
+    printf("\n Ilosc warstw obrazu: %d", Picture.biWarstwy);
 
-    fread(&Picture.biBitCount, sizeof(Picture.biBitCount), 1, f);
-    printf("\n Liczba bitow na piksel: %d (1, 4, 8, or 24)", Picture.biBitCount);
+    fread(&Picture.biIloscBitow, sizeof(Picture.biIloscBitow), 1, f);
+    printf("\n Liczba bitow na piksel: %d (1, 4, 8, or 24)", Picture.biIloscBitow);
 
-    fread(&Picture.biCompression, sizeof(Picture.biCompression), 1, f);
-    printf("\n Kompresja: %d (0=none, 1=RLE-8, 2=RLE-4)", Picture.biCompression);
+    fread(&Picture.biKompresja, sizeof(Picture.biKompresja), 1, f);
+    printf("\n Kompresja: %d (0=none, 1=RLE-8, 2=RLE-4)", Picture.biKompresja);
 
-    fread(&Picture.biSizeImage, sizeof(Picture.biSizeImage), 1, f);
-    printf("\n Rozmiar samego rysunku: %d", Picture.biSizeImage);
+    fread(&Picture.biRozmiarObrazu, sizeof(Picture.biRozmiarObrazu), 1, f);
+    printf("\n Rozmiar obrazu: %d", Picture.biRozmiarObrazu);
 
     fread(&Picture.biXPelsPerMeter, sizeof(Picture.biXPelsPerMeter), 1, f);
     printf("\n Rozdzielczosc pozioma: %d", Picture.biXPelsPerMeter);
@@ -110,20 +111,20 @@ int main(int arc, char* argv[]) {
     }
 
     fseek(w, 0, SEEK_SET); //fseek- function which sets the position indicator (by adding offset) to the beginning of the file
-    fwrite(&File.bfType, sizeof(File.bfType), 1, w); //fwrite- writes an array of elements by the size of specified bytes to the current stream position from memory pointer (ptr)
-    fwrite(&File.bfSize, sizeof(File.bfSize), 1, w);
+    fwrite(&File.bfTyp, sizeof(File.bfTyp), 1, w); //fwrite- writes an array of elements by the size of specified bytes to the current stream position from memory pointer (ptr)
+    fwrite(&File.bfRozmiar, sizeof(File.bfRozmiar), 1, w);
     fwrite(&File.bfReserved1, sizeof(File.bfReserved1), 1, w);
     fwrite(&File.bfReserved2, sizeof(File.bfReserved2), 1, w);
     fwrite(&File.bfOffBits, sizeof(File.bfOffBits), 1, w);
 
     fseek(w, 14, SEEK_SET); //fseek- function which sets the position indicator (by adding offset) to the beginning of the file
-    fwrite(&Picture.biSize, sizeof(Picture.biSize), 1, w);
-    fwrite(&Picture.biWidth, sizeof(Picture.biWidth), 1, w);
-    fwrite(&Picture.biHeight, sizeof(Picture.biHeight), 1, w);
-    fwrite(&Picture.biPlanes, sizeof(Picture.biPlanes), 1, w);
-    fwrite(&Picture.biBitCount, sizeof(Picture.biBitCount), 1, w);
-    fwrite(&Picture.biCompression, sizeof(Picture.biCompression), 1, w);
-    fwrite(&Picture.biSizeImage, sizeof(Picture.biSizeImage), 1, w);
+    fwrite(&Picture.biRozmiar, sizeof(Picture.biRozmiar), 1, w);
+    fwrite(&Picture.biSzerokosc, sizeof(Picture.biSzerokosc), 1, w);
+    fwrite(&Picture.biWysokosc, sizeof(Picture.biWysokosc), 1, w);
+    fwrite(&Picture.biWarstwy, sizeof(Picture.biWarstwy), 1, w);
+    fwrite(&Picture.biIloscBitow, sizeof(Picture.biIloscBitow), 1, w);
+    fwrite(&Picture.biKompresja, sizeof(Picture.biKompresja), 1, w);
+    fwrite(&Picture.biRozmiarObrazu, sizeof(Picture.biRozmiarObrazu), 1, w);
     fwrite(&Picture.biXPelsPerMeter, sizeof(Picture.biXPelsPerMeter), 1, w);
     fwrite(&Picture.biYPelsPerMeter, sizeof(Picture.biYPelsPerMeter), 1, w);
     fwrite(&Picture.biClrUsed, sizeof(Picture.biClrUsed), 1, w);
@@ -132,7 +133,7 @@ int main(int arc, char* argv[]) {
     fseek(w, sizeof(File.bfOffBits), SEEK_SET); //fseek- function which sets the position indicator (by adding offset) to the beginning of the file
 
     int bmpImg;
-    for (int i = File.bfOffBits; i < File.bfSize; i++)
+    for (int i = File.bfOffBits; i < File.bfRozmiar; i++)
     {
         fseek(f, i, SEEK_SET);
         fseek(w, i, SEEK_SET);
