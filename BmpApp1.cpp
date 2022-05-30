@@ -31,9 +31,9 @@ struct KoloryRGB {
 int main(int arc, char* argv[]) {
     FILE* f;
 
-    f = fopen("test.bmp","rb");
+    f = fopen("test.bmp","rb"); //fopen- opens files. rb is put as an argument to read the file (r also can be used)
 
-    if (f == nullptr)
+    if (f == nullptr) //checks if file exists/is not empty
     {
         printf("\n\n Nie mozna otworzyc pliku f");
         return -1;
@@ -45,7 +45,7 @@ int main(int arc, char* argv[]) {
 
     printf("\n INFORMACJE O BITMAPIE\n\n");
 
-    fread(&File.bfType, sizeof(File.bfType), 1, f);
+    fread(&File.bfType, sizeof(File.bfType), 1, f); //fread- reads an array of elements with a size of specified bytes which is stored in the specified memory pointer (ptr)
     printf(" Typ: %x", File.bfType);
 
     fread(&File.bfSize, sizeof(File.bfSize), 1, f);
@@ -62,7 +62,7 @@ int main(int arc, char* argv[]) {
 
     printf("\n");
 
-    fseek(f, 14, SEEK_SET);
+    fseek(f, 14, SEEK_SET); //fseek- function which sets the position indicator (by adding offset) to the beginning of the file
     fread(&Picture.biSize, sizeof(Picture.biSize), 1, f);
     printf("\n Wielkosc naglowka informacyjnego: %d", Picture.biSize);
 
@@ -99,7 +99,7 @@ int main(int arc, char* argv[]) {
     /*************************/
 
     FILE* w = fopen("negative.bmp", "wb");
-    if (w == nullptr)
+    if (w == nullptr) //checks if file exists/is not empty
     {
         printf("\n\n Nie mozna otworzyc pliku w");
         return -1;
@@ -109,14 +109,14 @@ int main(int arc, char* argv[]) {
         printf("\n\n Plik w został otwarty!");
     }
 
-    fseek(w, 0, SEEK_SET);
-    fwrite(&File.bfType, sizeof(File.bfType), 1, w);
+    fseek(w, 0, SEEK_SET); //fseek- function which sets the position indicator (by adding offset) to the beginning of the file
+    fwrite(&File.bfType, sizeof(File.bfType), 1, w); //fwrite- writes an array of elements by the size of specified bytes to the current stream position from memory pointer (ptr)
     fwrite(&File.bfSize, sizeof(File.bfSize), 1, w);
     fwrite(&File.bfReserved1, sizeof(File.bfReserved1), 1, w);
     fwrite(&File.bfReserved2, sizeof(File.bfReserved2), 1, w);
     fwrite(&File.bfOffBits, sizeof(File.bfOffBits), 1, w);
 
-    fseek(w, 14, SEEK_SET);
+    fseek(w, 14, SEEK_SET); //fseek- function which sets the position indicator (by adding offset) to the beginning of the file
     fwrite(&Picture.biSize, sizeof(Picture.biSize), 1, w);
     fwrite(&Picture.biWidth, sizeof(Picture.biWidth), 1, w);
     fwrite(&Picture.biHeight, sizeof(Picture.biHeight), 1, w);
@@ -129,7 +129,7 @@ int main(int arc, char* argv[]) {
     fwrite(&Picture.biClrUsed, sizeof(Picture.biClrUsed), 1, w);
     fwrite(&Picture.biClrImportant, sizeof(Picture.biClrImportant), 1, w);
 
-    fseek(w, sizeof(File.bfOffBits), SEEK_SET);
+    fseek(w, sizeof(File.bfOffBits), SEEK_SET); //fseek- function which sets the position indicator (by adding offset) to the beginning of the file
 
     int bmpImg;
     for (int i = File.bfOffBits; i < File.bfSize; i++)
